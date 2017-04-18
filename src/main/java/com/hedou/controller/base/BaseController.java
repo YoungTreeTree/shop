@@ -1,5 +1,6 @@
 package com.hedou.controller.base;
 
+import com.framework.constant.Constant;
 import com.framework.exceptions.NotLoginException;
 import com.hedou.json.BaseJson;
 import com.framework.exceptions.InvaildParamentException;
@@ -56,6 +57,17 @@ public class BaseController {
         return (HttpServletResponse) currentResponse.get();
     }
 
+    protected void setUserSession(Object value){
+        getHttpRequest().getSession().setAttribute(Constant.USER_ID, value);
+    }
+
+    protected long getUserSession(){
+        HttpSession session=getHttpRequest().getSession();
+        if(session.getAttribute(Constant.USER_ID)==null)
+            throw new NotLoginException();
+        return Long.parseLong(session.getAttribute(Constant.USER_ID).toString());
+    }
+
     /**
      * 保存session数据
      * @param key
@@ -70,10 +82,7 @@ public class BaseController {
      * @param key
      */
     protected Object getSessionAttribute(String key) {
-        HttpSession session=getHttpRequest().getSession();
-        if(key.equals("aaa")&&session.getAttribute(key)==null)
-            throw new NotLoginException();
-        return session.getAttribute(key);
+        return getHttpRequest().getSession().getAttribute(key);
     }
 
 

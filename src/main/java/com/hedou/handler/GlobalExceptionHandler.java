@@ -4,6 +4,8 @@ import com.framework.exceptions.NotLoginException;
 import com.hedou.json.BaseJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,19 +25,19 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public BaseJson NotLoginExceptionHandler(NotLoginException e){
         queryJson = new BaseJson();
-        queryJson.setRetcode("0005");
-        queryJson.setErrorMsg("用户尚未登录！");
+        queryJson.setErrno(8);
+        queryJson.setErrmsg("用户尚未登录！");
         log.error(e.getMessage());
         e.printStackTrace();
         return queryJson;
     }
 
-    @ExceptionHandler(NumberFormatException.class)
+    @ExceptionHandler({NumberFormatException.class,MissingServletRequestParameterException.class, TypeMismatchException.class})
     @ResponseBody
-    public BaseJson NumberFormatExceptionHandler(NumberFormatException e){
+    public BaseJson ParameterExceptionHandler(Exception e){
         queryJson = new BaseJson();
-        queryJson.setRetcode("0006");
-        queryJson.setErrorMsg("请检查请求参数是否正确！");
+        queryJson.setErrno(9);
+        queryJson.setErrmsg("请求参数错误或缺少必须参数！");
         log.error(e.getMessage());
         e.printStackTrace();
         return queryJson;
@@ -45,8 +47,8 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public BaseJson ExceptionHandler(Exception e){
         queryJson = new BaseJson();
-        queryJson.setRetcode("0003");
-        queryJson.setErrorMsg("服务器出现异常！");
+        queryJson.setErrno(1);
+        queryJson.setErrmsg("服务器出现异常！");
         log.error(e.getMessage());
         e.printStackTrace();
         return queryJson;

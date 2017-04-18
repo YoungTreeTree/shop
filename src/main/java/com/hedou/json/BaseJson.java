@@ -8,33 +8,33 @@ import java.io.Serializable;
  */
 public class BaseJson implements Serializable,Cloneable {
 
-    private String retcode;//响应代码
-    private String errorMsg;//错误消息
+    private int errno;//响应代码 0-正确 1-错误
+    private String errmsg;//错误消息
 
     private Object obj;
     public BaseJson()
     {
-        retcode = "0000";
+        errno = 0;
         obj = null;
     }
 
-    public BaseJson(String retcode){
-        this.retcode = retcode;
-        obj = "";
+    public BaseJson(int errno){
+        this.errno = errno;
+        obj = null;
     }
 
-    public String getRetcode() {
-        return retcode;
+    public int getErrno() {
+        return errno;
     }
-    public void setRetcode(String retcode) {
-        this.retcode = retcode;
+    public void setErrno(int errno) {
+        this.errno = errno;
     }
 
-    public String getErrorMsg() {
-        return errorMsg;
+    public String getErrmsg() {
+        return errmsg;
     }
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
     }
 
     public Object getObj() {

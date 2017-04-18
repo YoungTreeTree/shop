@@ -32,10 +32,10 @@ public class PocketController extends BaseController {
         List result = pocketService.getPocketsHis(idStr);
         if (!result.isEmpty()) {
             queryJson.setObj(result);
-            queryJson.setRetcode("0000");
+            queryJson.setErrno(0);
         } else {
-            queryJson.setRetcode("0001");
-            queryJson.setErrorMsg("暂无钱包数据！");
+            queryJson.setErrno(1);
+            queryJson.setErrmsg("暂无钱包数据！");
         }
 
         return queryJson;
