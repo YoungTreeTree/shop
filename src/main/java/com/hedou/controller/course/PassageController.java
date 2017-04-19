@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/passage")
-public class PassageController extends BaseController{
+public class PassageController extends BaseController {
 
     @Resource
     private IPassageService passageService;
@@ -27,18 +27,31 @@ public class PassageController extends BaseController{
 
     @ResponseBody
     @RequestMapping(value = "/note", method = RequestMethod.GET)
-    public BaseJson getPocketsHis(@RequestParam("p_id") long pId) throws Exception {
+    public BaseJson getPassageNote(@RequestParam("p_id") long pId) throws Exception {
         queryJson = new BaseJson();
         setUserSession(1);
-        long userId=getUserSession();
-        NoteForPassage result = passageService.getPassageNote(pId,userId);
-        if (result!=null) {
-            queryJson.setObj(result);
-            queryJson.setErrno(0);
-        } else {
-            queryJson.setErrno(1);
-            queryJson.setErrmsg("暂无相应笔记数据！");
-        }
-        return queryJson;
+        long userId = getUserSession();
+        NoteForPassage result = passageService.getPassageNote(userId, pId);
+        return processServiceResult(queryJson, result, "暂无相应笔记数据！");
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/note", method = RequestMethod.POST)
+    public BaseJson saveOrUpdateNote(@RequestParam("p_id") long pId, @RequestParam("note_content") String noteContent) throws Exception {
+        queryJson = new BaseJson();
+        setUserSession(1);
+        long userId = getUserSession();
+        int result = passageService.saveOrUpdatePassageNote(userId, pId, noteContent);
+        return processServiceResult(queryJson, result, "文章id不合法！");
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/comment", method = RequestMethod.POST)
+    public BaseJson addPassageComment(@RequestParam("p_id") long pId, @RequestParam("content") String content) throws Exception {
+        queryJson = new BaseJson();
+        setUserSession(1);
+        long userId = getUserSession();
+        int result = passageService.addPassageComment(userId, pId, content);
+        return processServiceResult(queryJson, result, "文章id不合法！");
     }
 }

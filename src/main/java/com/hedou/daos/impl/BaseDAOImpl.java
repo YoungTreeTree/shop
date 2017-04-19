@@ -68,6 +68,20 @@ public class BaseDAOImpl implements BaseDAO {
         return queryObject.list();
     }
 
+    public List findByPropertys(Map<String, Object> propertyNameValueMap, Class cls) {
+        List<Object> values = new ArrayList<>();
+        String tableName = cls.getName();
+        String queryString = "from " + tableName + " as model where 1=1";
+        for (Map.Entry<String, Object> entry : propertyNameValueMap.entrySet()) {
+            queryString += " and model." + entry.getKey() + "= ?";
+            values.add(entry.getValue());
+        }
+        Query queryObject = this.getSession().createQuery(queryString);
+        queryObject.setParameterList(queryString, values.toArray());
+        return queryObject.list();
+    }
+
+
     public List<Map<String, Object>> findBySQLForMap(final String sql, final Object[] values) {
         List result = new ArrayList();
         Query queryObject = this.getSession().createSQLQuery(sql);
@@ -94,19 +108,18 @@ public class BaseDAOImpl implements BaseDAO {
             }
         }
         if (currentPage >= 0) {
-            queryObject.setFirstResult(currentPage*pageSize).setMaxResults(pageSize);
+            queryObject.setFirstResult(currentPage * pageSize).setMaxResults(pageSize);
         }
         List<java.util.Map<String, Object>> list = queryObject.list();
         return list;
     }
 
     /**
-     *
      * Function Name: executeSQL
+     *
      * @param sql
      * @param values
-     * @return
-     * description:执行带参数的SQL语句
+     * @return description:执行带参数的SQL语句
      * Modification History:
      */
     public int executeSQL(final String sql, final Object[] values) {
@@ -122,11 +135,10 @@ public class BaseDAOImpl implements BaseDAO {
 
 
     /**
-     *
      * Function Name: executeSQL
-     * @param sql
-     * description:执行不带参数SQL或存储过程
-     * Modification History:
+     *
+     * @param sql description:执行不带参数SQL或存储过程
+     *            Modification History:
      */
     public int executeSQL(final String sql) {
         SQLQuery query = this.getSession().createSQLQuery(sql);
@@ -135,12 +147,11 @@ public class BaseDAOImpl implements BaseDAO {
 
 
     /**
-     *
      * Function Name: findBySQL
+     *
      * @param sql
      * @param values
-     * @return
-     * description:带参数不分页的SQL
+     * @return description:带参数不分页的SQL
      * Modification History:
      */
     public List findBySQL(final String sql, final Object[] values) {
@@ -155,14 +166,13 @@ public class BaseDAOImpl implements BaseDAO {
     }
 
     /**
-     *
      * Function Name: findByPageForSQL
+     *
      * @param sql
-     * @param values 参数值
-     * @param offset 起始位置，若查询全部则传入-1
+     * @param values   参数值
+     * @param offset   起始位置，若查询全部则传入-1
      * @param pageSize 每页记录数
-     * @return
-     * description: 执行带参数带分页的SQL
+     * @return description: 执行带参数带分页的SQL
      * Modification History:
      */
     public List findByPageForSQL(final String sql, final Object[] values,
@@ -170,8 +180,8 @@ public class BaseDAOImpl implements BaseDAO {
         SQLQuery query = this.getSession().createSQLQuery(sql);
         if (values != null) {
             for (int i = 0; i < values.length; i++) {
-                if(values[i] instanceof Date)
-                    query.setDate(i, (Date)values[i]);
+                if (values[i] instanceof Date)
+                    query.setDate(i, (Date) values[i]);
                 else
                     query.setParameter(i, values[i]);
             }
@@ -182,20 +192,21 @@ public class BaseDAOImpl implements BaseDAO {
         return query.list();
     }
 
-    public void flush(){
+    public void flush() {
         getSession().flush();
     }
 
-    public void clear(){
+    public void clear() {
         getSession().clear();
     }
 
     /**
      * 通过sql方式获取信息后，封装为指定的VO对象集合
      * Function Name: findBySQLForVO
+     *
      * @param sql
      * @param classes 指定VO
-     * @param values 传入参数值
+     * @param values  传入参数值
      * @return 返回指定VO集合
      */
     public List findBySQLForVO(final String sql, final Class classes, final Object[] values) {
@@ -206,11 +217,11 @@ public class BaseDAOImpl implements BaseDAO {
                 query.setParameter(i, values[i]);
             }
         }
-        for(Field f : classes.getDeclaredFields()){
-            if(Pattern.compile("as\\s+"+f.getName()+"[\\s|,]+").matcher(sql).find()){
+        for (Field f : classes.getDeclaredFields()) {
+            if (Pattern.compile("as\\s+" + f.getName() + "[\\s|,]+").matcher(sql).find()) {
                 AbstractSingleColumnStandardBasicType type = null;
                 try {
-                    type = (AbstractSingleColumnStandardBasicType)Class.forName("org.hibernate.type."+f.getType().getSimpleName()+"Type").newInstance();
+                    type = (AbstractSingleColumnStandardBasicType) Class.forName("org.hibernate.type." + f.getType().getSimpleName() + "Type").newInstance();
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -226,14 +237,13 @@ public class BaseDAOImpl implements BaseDAO {
     }
 
     /**
-     *
      * Function Name: findBySQLForVO
+     *
      * @param sql
-     * @param values 参数值
-     * @param offset 起始位置，若查询全部则传入-1
+     * @param values   参数值
+     * @param offset   起始位置，若查询全部则传入-1
      * @param pageSize 每页记录数
-     * @return
-     * description: 执行带参数带分页的SQL
+     * @return description: 执行带参数带分页的SQL
      * Modification History:
      */
     public List findBySQLForVO(final String sql, final Class classes, final Object[] values, final int offset, final int pageSize) {
@@ -245,11 +255,11 @@ public class BaseDAOImpl implements BaseDAO {
             }
         }
 
-        for(Field f : classes.getSuperclass().getDeclaredFields()){
-            if(Pattern.compile("as\\s+"+f.getName()+"[\\s|,]+").matcher(sql).find()){
+        for (Field f : classes.getSuperclass().getDeclaredFields()) {
+            if (Pattern.compile("as\\s+" + f.getName() + "[\\s|,]+").matcher(sql).find()) {
                 AbstractSingleColumnStandardBasicType type = null;
                 try {
-                    type = (AbstractSingleColumnStandardBasicType)Class.forName("org.hibernate.type."+f.getType().getSimpleName()+"Type").newInstance();
+                    type = (AbstractSingleColumnStandardBasicType) Class.forName("org.hibernate.type." + f.getType().getSimpleName() + "Type").newInstance();
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -261,11 +271,11 @@ public class BaseDAOImpl implements BaseDAO {
             }
         }
 
-        for(Field f : classes.getDeclaredFields()){
-            if(Pattern.compile("as\\s+"+f.getName()+"[\\s|,]+").matcher(sql).find()){
+        for (Field f : classes.getDeclaredFields()) {
+            if (Pattern.compile("as\\s+" + f.getName() + "[\\s|,]+").matcher(sql).find()) {
                 AbstractSingleColumnStandardBasicType type = null;
                 try {
-                    type = (AbstractSingleColumnStandardBasicType)Class.forName("org.hibernate.type."+f.getType().getSimpleName()+"Type").newInstance();
+                    type = (AbstractSingleColumnStandardBasicType) Class.forName("org.hibernate.type." + f.getType().getSimpleName() + "Type").newInstance();
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {

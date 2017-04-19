@@ -17,11 +17,10 @@ public class Comment implements java.io.Serializable {
 	// Fields
 
 	private Long comId;
-	private String UId;
+	private Long UId;
 	private Long PId;
 	private String comContent;
 	private Timestamp comCreateTime;
-	private Timestamp comModificationTime;
 
 	// Constructors
 
@@ -30,13 +29,12 @@ public class Comment implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Comment(String UId, Long PId, String comContent,
-			Timestamp comCreateTime, Timestamp comModificationTime) {
+	public Comment(Long UId, Long PId, String comContent,
+			Timestamp comCreateTime) {
 		this.UId = UId;
 		this.PId = PId;
 		this.comContent = comContent;
 		this.comCreateTime = comCreateTime;
-		this.comModificationTime = comModificationTime;
 	}
 
 	// Property accessors
@@ -52,11 +50,11 @@ public class Comment implements java.io.Serializable {
 	}
 
 	@Column(name = "u_id")
-	public String getUId() {
+	public Long getUId() {
 		return this.UId;
 	}
 
-	public void setUId(String UId) {
+	public void setUId(Long UId) {
 		this.UId = UId;
 	}
 
@@ -87,13 +85,5 @@ public class Comment implements java.io.Serializable {
 		this.comCreateTime = comCreateTime;
 	}
 
-	@Column(name = "com_modificationTime", length = 19)
-	public Timestamp getComModificationTime() {
-		return this.comModificationTime;
-	}
-
-	public void setComModificationTime(Timestamp comModificationTime) {
-		this.comModificationTime = comModificationTime;
-	}
 
 }

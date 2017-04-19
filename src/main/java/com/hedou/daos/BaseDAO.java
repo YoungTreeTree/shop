@@ -20,6 +20,8 @@ public interface BaseDAO {
 
     public List findByProperty(String propertyName, Object value, Class cls);
 
+    public List findByPropertys(Map<String, Object> propertyNameValueMap, Class cls);
+
     public List<Map<String, Object>> findBySQLForMap(final String sql, final Object[] values);
 
     public List<Map<String, Object>> findBySQLForMap(String sql, Object[] values, int currentPage, int pageSize);

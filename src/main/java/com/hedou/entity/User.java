@@ -3,6 +3,7 @@ package com.hedou.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -22,6 +23,9 @@ public class User implements java.io.Serializable {
 	private String UType;
 	private String USignature;
 	private String UPortrait;
+	private String UFullName;
+	private String USchool;
+	private String UGrade;
 
 	// Constructors
 
@@ -31,18 +35,22 @@ public class User implements java.io.Serializable {
 
 	/** full constructor */
 	public User(String UName, String UPassword, String UEmailAddress,
-			String UType, String USignature, String UPortrait) {
+			String UType, String USignature, String UPortrait,
+			String UFullName, String USchool, String UGrade) {
 		this.UName = UName;
 		this.UPassword = UPassword;
 		this.UEmailAddress = UEmailAddress;
 		this.UType = UType;
 		this.USignature = USignature;
 		this.UPortrait = UPortrait;
+		this.UFullName = UFullName;
+		this.USchool = USchool;
+		this.UGrade = UGrade;
 	}
 
 	// Property accessors
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "u_id", unique = true, nullable = false)
 	public Long getUId() {
 		return this.UId;
@@ -104,6 +112,33 @@ public class User implements java.io.Serializable {
 
 	public void setUPortrait(String UPortrait) {
 		this.UPortrait = UPortrait;
+	}
+
+	@Column(name = "u_full_name")
+	public String getUFullName() {
+		return this.UFullName;
+	}
+
+	public void setUFullName(String UFullName) {
+		this.UFullName = UFullName;
+	}
+
+	@Column(name = "u_school")
+	public String getUSchool() {
+		return this.USchool;
+	}
+
+	public void setUSchool(String USchool) {
+		this.USchool = USchool;
+	}
+
+	@Column(name = "u_grade")
+	public String getUGrade() {
+		return this.UGrade;
+	}
+
+	public void setUGrade(String UGrade) {
+		this.UGrade = UGrade;
 	}
 
 }
