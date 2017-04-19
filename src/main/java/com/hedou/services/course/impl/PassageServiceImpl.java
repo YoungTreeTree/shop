@@ -1,18 +1,14 @@
 package com.hedou.services.course.impl;
 
-import com.hedou.entity.Comment;
-import com.hedou.entity.NoteForPassage;
-import com.hedou.entity.NoteForPassageId;
-import com.hedou.entity.Passage;
+import com.hedou.entity.*;
 import com.hedou.services.common.impl.CommServiceImpl;
 import com.hedou.services.course.IPassageService;
+import com.hedou.vo.CommentVo;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by cblin on 2017/4/18.
@@ -50,15 +46,22 @@ public class PassageServiceImpl extends CommServiceImpl implements IPassageServi
     }
 
     @Override
+    public List<CommentVo> getPassageComment(long passageId, int page) throws Exception {
+        if (baseDAO.findById(passageId, Passage.class) == null) return null;
+        List<Comment> comments = baseDAO.findByProperty("PId", passageId, Comment.class, page, 10);
+        List<Long> userIds = comments.stream().map(Comment::getUId).collect(Collectors.toList());
+        List<User> users = baseDAO.findByIds("UId", userIds, User.class);
+        List<CommentVo> commentVos = comments.stream().map(CommentVo::ConvertFromComment).collect(Collectors.toList());
+        commentVos.forEach(x -> {
+            List<User> newUsers = users.stream().filter(y -> y.getUId() == x.getUId()).collect(Collectors.toList());
+            x.setUser(newUsers.size() > 0 ? newUsers.get(0) : new User());
+        });
+        return commentVos;
+    }
+
+    @Override
     public int addPassageComment(long userId, long passageId, String content) throws Exception {
         if (baseDAO.findById(passageId, Passage.class) == null) return 1;
-        Map<String, Object> propertyNameValueMap = new HashMap<>();
-        propertyNameValueMap.put("UId", userId);
-        propertyNameValueMap.put("PId", passageId);
-        List<Comment> comments = baseDAO.findByPropertys(propertyNameValueMap, Comment.class);
-        if(comments.size()>0){
-            Comment comment=comments.get(0);
-        }
         Comment comment = new Comment(userId, passageId, content, new Timestamp((new Date()).getTime()));
         baseDAO.save(comment);
         return 0;

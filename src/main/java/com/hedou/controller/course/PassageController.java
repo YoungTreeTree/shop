@@ -1,9 +1,11 @@
 package com.hedou.controller.course;
 
 import com.hedou.controller.base.BaseController;
+import com.hedou.entity.Comment;
 import com.hedou.entity.NoteForPassage;
 import com.hedou.json.BaseJson;
 import com.hedou.services.course.IPassageService;
+import com.hedou.vo.CommentVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +44,14 @@ public class PassageController extends BaseController {
         setUserSession(1);
         long userId = getUserSession();
         int result = passageService.saveOrUpdatePassageNote(userId, pId, noteContent);
+        return processServiceResult(queryJson, result, "文章id不合法！");
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/comment", method = RequestMethod.GET)
+    public BaseJson getPassageComment(@RequestParam("p_id") long pId, @RequestParam("page") int page) throws Exception {
+        queryJson = new BaseJson();
+        List<CommentVo> result = passageService.getPassageComment(pId, page);
         return processServiceResult(queryJson, result, "文章id不合法！");
     }
 

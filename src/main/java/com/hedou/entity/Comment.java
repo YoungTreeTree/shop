@@ -85,5 +85,4 @@ public class Comment implements java.io.Serializable {
 		this.comCreateTime = comCreateTime;
 	}
 
-
 }

@@ -14,13 +14,19 @@ public interface BaseDAO {
 
     public void update(Object persistentInstance);
 
-    public <T> T findById(java.lang.Object id, Class<T> cls);
+    public <T> T findById(Object id, Class<T> cls);
 
-    public List findAll(Class cls);
+    public <T> List<T> findByIds(String idName, List<Long> id, Class<T> cls);
 
-    public List findByProperty(String propertyName, Object value, Class cls);
+    public <T> List<T> findAll(Class<T> cls);
 
-    public List findByPropertys(Map<String, Object> propertyNameValueMap, Class cls);
+    public <T> List<T> findByProperty(String propertyName, Object value, Class<T> cls);
+
+    public <T> List<T> findByProperty(String propertyName, Object value, Class<T> cls, int currentPage, int pageSize);
+
+    public <T> List<T> findByProperties(Map<String, Object> propertyNameValueMap, Class<T> cls);
+
+    public <T> List<T> findByProperties(Map<String, Object> propertyNameValueMap, Class<T> cls, int currentPage, int pageSize);
 
     public List<Map<String, Object>> findBySQLForMap(final String sql, final Object[] values);
 
@@ -34,9 +40,9 @@ public interface BaseDAO {
 
     public List findByPageForSQL(final String sql, final Object[] values, final int offset, final int pageSize);
 
-    public List findBySQLForVO(final String sql, final Class classes, final Object[] values);
+    public <T> List<T> findBySQLForVO(final String sql, final Class<T> classes, final Object[] values);
 
-    public List findBySQLForVO(final String sql, final Class classes, final Object[] values, final int offset, final int pageSize);
+    public <T> List<T> findBySQLForVO(final String sql, final Class<T> classes, final Object[] values, final int offset, final int pageSize);
 
     public void flush();
 

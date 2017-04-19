@@ -47,20 +47,28 @@ public class BaseDAOImpl implements BaseDAO {
         getSession().flush();
     }
 
-    public <T> T findById(java.lang.Object id, Class<T> cls) {
+    public <T> T findById(Object id, Class<T> cls) {
         String tableName = cls.getName();
         T instance = (T) this.getSession().get(tableName, (Serializable) id);
         return instance;
     }
 
-    public List findAll(Class cls) {
+    public <T> List<T> findByIds(String idName, List<Long> ids, Class<T> cls) {
+        String tableName = cls.getName();
+        String queryString = "from " + tableName + " as model where model." + idName + " in (:ids)";
+        Query queryObject = this.getSession().createQuery(queryString);
+        queryObject.setParameterList("ids", ids);
+        return queryObject.list();
+    }
+
+    public <T> List<T> findAll(Class<T> cls) {
         String tableName = cls.getName();
         String queryString = "from " + tableName;
         Query queryObject = this.getSession().createQuery(queryString);
         return queryObject.list();
     }
 
-    public List findByProperty(String propertyName, Object value, Class cls) {
+    public <T> List<T> findByProperty(String propertyName, Object value, Class<T> cls) {
         String tableName = cls.getName();
         String queryString = "from " + tableName + " as model where model." + propertyName + "= ?";
         Query queryObject = this.getSession().createQuery(queryString);
@@ -68,16 +76,40 @@ public class BaseDAOImpl implements BaseDAO {
         return queryObject.list();
     }
 
-    public List findByPropertys(Map<String, Object> propertyNameValueMap, Class cls) {
+    public <T> List<T> findByProperty(String propertyName, Object value, Class<T> cls, int currentPage, int pageSize) {
+        String tableName = cls.getName();
+        String queryString = "from " + tableName + " as model where model." + propertyName + "= ?";
+        Query queryObject = this.getSession().createQuery(queryString);
+        queryObject.setParameter(0, value);
+        queryObject.setFirstResult(currentPage * pageSize).setMaxResults(pageSize);
+        return queryObject.list();
+    }
+
+    public <T> List<T> findByProperties(Map<String, Object> propertyNameValueMap, Class<T> cls) {
         List<Object> values = new ArrayList<>();
         String tableName = cls.getName();
         String queryString = "from " + tableName + " as model where 1=1";
         for (Map.Entry<String, Object> entry : propertyNameValueMap.entrySet()) {
-            queryString += " and model." + entry.getKey() + "= ?";
-            values.add(entry.getValue());
+            queryString += " and model." + entry.getKey() + "= :" + entry.getKey();
         }
         Query queryObject = this.getSession().createQuery(queryString);
-        queryObject.setParameterList(queryString, values.toArray());
+        for (Map.Entry<String, Object> entry : propertyNameValueMap.entrySet()) {
+            queryObject.setParameter(entry.getKey(), entry.getValue());
+        }
+        return queryObject.list();
+    }
+
+    public <T> List<T> findByProperties(Map<String, Object> propertyNameValueMap, Class<T> cls, int currentPage, int pageSize) {
+        String tableName = cls.getName();
+        String queryString = "from " + tableName + " as model where 1=1";
+        for (Map.Entry<String, Object> entry : propertyNameValueMap.entrySet()) {
+            queryString += " and model." + entry.getKey() + "= :" + entry.getKey();
+        }
+        Query queryObject = this.getSession().createQuery(queryString);
+        for (Map.Entry<String, Object> entry : propertyNameValueMap.entrySet()) {
+            queryObject.setParameter(entry.getKey(), entry.getValue());
+        }
+        queryObject.setFirstResult(currentPage * pageSize).setMaxResults(pageSize);
         return queryObject.list();
     }
 
@@ -209,7 +241,7 @@ public class BaseDAOImpl implements BaseDAO {
      * @param values  传入参数值
      * @return 返回指定VO集合
      */
-    public List findBySQLForVO(final String sql, final Class classes, final Object[] values) {
+    public <T> List<T> findBySQLForVO(final String sql, final Class<T> classes, final Object[] values) {
         SQLQuery query = getSession().createSQLQuery(sql);
         if (values != null) {
             // 为hql语句传入参数
@@ -246,7 +278,7 @@ public class BaseDAOImpl implements BaseDAO {
      * @return description: 执行带参数带分页的SQL
      * Modification History:
      */
-    public List findBySQLForVO(final String sql, final Class classes, final Object[] values, final int offset, final int pageSize) {
+    public <T> List<T> findBySQLForVO(final String sql, final Class<T> classes, final Object[] values, final int offset, final int pageSize) {
         SQLQuery query = getSession().createSQLQuery(sql);
         if (values != null) {
             // 为sql语句传入参数
