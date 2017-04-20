@@ -49,7 +49,7 @@ public class PassageController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
-    public BaseJson getPassageComment(@RequestParam("p_id") long pId, @RequestParam("page") int page) throws Exception {
+    public BaseJson getPassageComment(@RequestParam("p_id") long pId, @RequestParam(value = "page",defaultValue = "0") int page) throws Exception {
         queryJson = new BaseJson();
         List<CommentVo> result = passageService.getPassageComment(pId, page);
         return processServiceResult(queryJson, result, "文章id不合法！");
