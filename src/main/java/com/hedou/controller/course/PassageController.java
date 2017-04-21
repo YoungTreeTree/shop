@@ -19,7 +19,7 @@ import java.util.List;
  * Created by cblin on 2017/4/18.
  */
 @Controller
-@RequestMapping(value = "/passage")
+@RequestMapping(value = "/passage") 
 public class PassageController extends BaseController {
 
     @Resource
