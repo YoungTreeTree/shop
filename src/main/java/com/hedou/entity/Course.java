@@ -22,7 +22,7 @@ public class Course implements java.io.Serializable {
 	private Timestamp CCreateTime;
 	private String CPic;
 	private String CExcerpt;
-
+	private Long catId;
 	// Constructors
 
 	/** default constructor */
@@ -96,4 +96,12 @@ public class Course implements java.io.Serializable {
 		this.CExcerpt = CExcerpt;
 	}
 
+	@Column(name = "cat_id", unique = true, nullable = false)
+	public Long getCatId() {
+		return this.catId;
+	}
+
+	public void setCatId(Long catId) {
+		this.catId = catId;
+	}
 }

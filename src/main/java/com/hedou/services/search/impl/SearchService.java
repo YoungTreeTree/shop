@@ -18,9 +18,10 @@ import java.util.Map;
 public class SearchService extends CommServiceImpl implements ISearchService {
     @Override
     public List<CourseVo> getCourse(String wd, int page) throws Exception {
+        List<CourseVo>reListVo=new ArrayList<>();
+        if(!(wd.length()>0)){ return reListVo;}
         String sql="select * from Course where c_name like ? or c_excerpt like ? ";
         List<Map<String,Object>>reList=baseDAO.findBySQLForMap(sql, new Object[]{"%"+wd+"%","%"+wd+"%"},page,10);
-        List<CourseVo>reListVo=new ArrayList<>();
         for(Map<String,Object> m:reList){
             CourseVo cv=new CourseVo(Long.parseLong(m.get("c_id").toString()),m.get("c_name").toString(),m.get("c_pic").toString(),m.get("c_excerpt").toString());
             reListVo.add(cv);

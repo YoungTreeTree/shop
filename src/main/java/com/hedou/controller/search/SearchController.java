@@ -2,6 +2,7 @@ package com.hedou.controller.search;
 
 import com.hedou.controller.base.BaseController;
 import com.hedou.json.BaseJson;
+import com.hedou.services.search.ISearchService;
 import com.hedou.services.search.impl.SearchService;
 import com.hedou.vo.CourseVo;
 import org.springframework.stereotype.Controller;
@@ -21,14 +22,19 @@ import java.util.List;
 public class SearchController extends BaseController {
 
     @Resource
-    private SearchService searchService;
+    private ISearchService searchService;
     private BaseJson queryJson = new BaseJson();
 
     @ResponseBody
     @RequestMapping(value = "/courses", method = RequestMethod.GET)
-    public BaseJson getPassageNote(@RequestParam("wd") String wd, @RequestParam("page") int page) throws Exception {
+    public BaseJson getPassageNote(@RequestParam("wd") String wd) throws Exception {
         queryJson = new BaseJson();
-        System.out.println(wd+"   "+page);
+        queryJson.setErrmsg("success");
+        String page_p=getHttpRequest().getParameter("page");
+        int page=1;
+        if(page_p.length()>0){
+             page=Integer.parseInt(page_p);
+        }
         List<CourseVo> result = searchService.getCourse(wd,page-1);
         if(result.size()<=0){
             result=null;
